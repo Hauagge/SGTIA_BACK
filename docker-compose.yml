@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: sgtia-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sgtia
+      POSTGRES_PASSWORD: sgtia
+      POSTGRES_DB: sgtia
+    ports:
+      - '5432:5432'
+    volumes:
+      - sgtia-db-data:/var/lib/postgresql/data
+
+volumes:
+  sgtia-db-data:
