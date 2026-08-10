@@ -1,6 +1,6 @@
 
-# env
 .env
 dist
 node_modules/
 coverage/
+uploads/
