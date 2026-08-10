@@ -1,5 +1,6 @@
 import {
   boolean,
+  integer,
   pgEnum,
   pgTable,
   primaryKey,
@@ -61,3 +62,103 @@ export type Workspace = typeof workspaces.$inferSelect;
 export type User = typeof users.$inferSelect;
 export type Project = typeof projects.$inferSelect;
 export type ProjectMember = typeof projectMembers.$inferSelect;
+
+export const taskTypeEnum = pgEnum('task_type', [
+  'BUG',
+  'FEATURE',
+  'IMPROVEMENT',
+  'TECHNICAL',
+]);
+
+export const taskStatusEnum = pgEnum('task_status', [
+  'BACKLOG',
+  'ANALYSIS',
+  'READY',
+  'IN_PROGRESS',
+  'VALIDATION',
+  'DONE',
+]);
+
+export const priorityEnum = pgEnum('priority', ['P0', 'P1', 'P2', 'P3']);
+
+export const tasks = pgTable('tasks', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  workspaceId: uuid('workspace_id')
+    .notNull()
+    .references(() => workspaces.id, { onDelete: 'cascade' }),
+  projectId: uuid('project_id')
+    .notNull()
+    .references(() => projects.id, { onDelete: 'cascade' }),
+  number: integer('number').notNull(),
+  title: text('title').notNull(),
+  type: taskTypeEnum('type').notNull().default('FEATURE'),
+  status: taskStatusEnum('status').notNull().default('BACKLOG'),
+  priority: priorityEnum('priority').notNull().default('P2'),
+  description: text('description').notNull().default(''),
+  currentBehavior: text('current_behavior').notNull().default(''),
+  expectedBehavior: text('expected_behavior').notNull().default(''),
+  impact: text('impact').notNull().default(''),
+  assigneeId: uuid('assignee_id').references(() => users.id, {
+    onDelete: 'set null',
+  }),
+  createdById: uuid('created_by_id').references(() => users.id, {
+    onDelete: 'set null',
+  }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  completedAt: timestamp('completed_at'),
+});
+
+export const acceptanceCriteria = pgTable('acceptance_criteria', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  taskId: uuid('task_id')
+    .notNull()
+    .references(() => tasks.id, { onDelete: 'cascade' }),
+  description: text('description').notNull(),
+  completed: boolean('completed').notNull().default(false),
+  position: integer('position').notNull().default(0),
+});
+
+export const comments = pgTable('comments', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  taskId: uuid('task_id')
+    .notNull()
+    .references(() => tasks.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const taskHistory = pgTable('task_history', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  taskId: uuid('task_id')
+    .notNull()
+    .references(() => tasks.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+  action: text('action').notNull(),
+  oldValue: text('old_value'),
+  newValue: text('new_value'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const attachments = pgTable('attachments', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  taskId: uuid('task_id')
+    .notNull()
+    .references(() => tasks.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+  fileName: text('file_name').notNull(),
+  mimeType: text('mime_type').notNull(),
+  size: integer('size').notNull(),
+  storageKey: text('storage_key').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export type Task = typeof tasks.$inferSelect;
+export type AcceptanceCriterion = typeof acceptanceCriteria.$inferSelect;
+export type Comment = typeof comments.$inferSelect;
+export type TaskHistoryEntry = typeof taskHistory.$inferSelect;
+export type Attachment = typeof attachments.$inferSelect;
