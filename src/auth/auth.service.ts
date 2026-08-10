@@ -101,6 +101,7 @@ export class AuthService {
       name: u.name,
       email: u.email,
       role: u.role,
+      workspaceId: u.workspaceId,
       active: u.active,
     };
   }
