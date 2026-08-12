@@ -5,6 +5,7 @@ import { DRIZZLE } from '../database/drizzle.constants';
 import type { DrizzleDB } from '../database/drizzle.module';
 import {
   acceptanceCriteria,
+  attachments,
   comments,
   taskHistory,
   tasks,
@@ -37,7 +38,7 @@ export class TasksService {
         priority: tasks.priority,
         assigneeName: users.name,
         commentCount: sql<number>`(select count(*)::int from ${comments} where ${comments.taskId} = ${tasks.id})`,
-        attachmentCount: sql<number>`0`,
+        attachmentCount: sql<number>`(select count(*)::int from ${attachments} where ${attachments.taskId} = ${tasks.id})`,
       })
       .from(tasks)
       .leftJoin(users, eq(users.id, tasks.assigneeId))
