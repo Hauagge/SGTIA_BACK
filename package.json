@@ -92,6 +92,7 @@
       "!storage/s3-storage.provider.ts",
       "!ai/openai-llm.provider.ts",
       "!ai/gemini-llm.provider.ts",
+      "!ai/gemini-transcription.provider.ts",
       "!**/testing/**"
     ],
     "coverageDirectory": "../coverage",

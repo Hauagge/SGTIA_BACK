@@ -7,6 +7,8 @@ import { AiService } from './ai.service';
 import { LLM } from './llm.port';
 import { OpenAiLlmProvider } from './openai-llm.provider';
 import { GeminiLlmProvider } from './gemini-llm.provider';
+import { TRANSCRIPTION } from './transcription.port';
+import { GeminiTranscriptionProvider } from './gemini-transcription.provider';
 
 @Module({
   imports: [ProjectsModule],
@@ -20,6 +22,12 @@ import { GeminiLlmProvider } from './gemini-llm.provider';
         config.get<string>('AI_DRIVER') === 'gemini'
           ? new GeminiLlmProvider(config)
           : new OpenAiLlmProvider(config),
+    },
+    {
+      provide: TRANSCRIPTION,
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) =>
+        new GeminiTranscriptionProvider(config),
     },
   ],
 })
