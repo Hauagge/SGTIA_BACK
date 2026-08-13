@@ -8,6 +8,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { TasksModule } from './tasks/tasks.module';
 import { StorageModule } from './storage/storage.module';
 import { AttachmentsModule } from './attachments/attachments.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AttachmentsModule } from './attachments/attachments.module';
     ProjectsModule,
     TasksModule,
     AttachmentsModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

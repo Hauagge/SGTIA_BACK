@@ -39,6 +39,7 @@ export const projects = pgTable('projects', {
     .references(() => workspaces.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   description: text('description'),
+  aiContext: text('ai_context'),
   active: boolean('active').notNull().default(true),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -157,8 +158,28 @@ export const attachments = pgTable('attachments', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+export const aiSourceEnum = pgEnum('ai_source', ['TEXT', 'AUDIO']);
+
+export const aiInterpretations = pgTable('ai_interpretations', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  workspaceId: uuid('workspace_id')
+    .notNull()
+    .references(() => workspaces.id, { onDelete: 'cascade' }),
+  projectId: uuid('project_id')
+    .notNull()
+    .references(() => projects.id, { onDelete: 'cascade' }),
+  taskId: uuid('task_id').references(() => tasks.id, { onDelete: 'set null' }),
+  source: aiSourceEnum('source').notNull().default('TEXT'),
+  originalInput: text('original_input').notNull(),
+  draftJson: text('draft_json').notNull(),
+  model: text('model').notNull(),
+  confidence: text('confidence'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 export type Task = typeof tasks.$inferSelect;
 export type AcceptanceCriterion = typeof acceptanceCriteria.$inferSelect;
 export type Comment = typeof comments.$inferSelect;
 export type TaskHistoryEntry = typeof taskHistory.$inferSelect;
 export type Attachment = typeof attachments.$inferSelect;
+export type AiInterpretation = typeof aiInterpretations.$inferSelect;

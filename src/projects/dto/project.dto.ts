@@ -9,6 +9,7 @@ export const updateProjectSchema = z
   .object({
     name: z.string().min(2).optional(),
     description: z.string().optional(),
+    aiContext: z.string().optional(),
     active: z.boolean().optional(),
   })
   .refine((v) => Object.keys(v).length > 0, {
