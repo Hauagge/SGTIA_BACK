@@ -59,7 +59,6 @@ export class ProjectsService {
       await tx.insert(projectMembers).values({
         projectId: project.id,
         userId: user.sub,
-        role: 'ADMIN',
       });
       return project;
     });
@@ -100,7 +99,6 @@ export class ProjectsService {
     return this.db
       .select({
         userId: projectMembers.userId,
-        role: projectMembers.role,
         name: users.name,
         email: users.email,
       })
@@ -129,12 +127,8 @@ export class ProjectsService {
       .values({
         projectId: id,
         userId: input.userId,
-        role: input.role ?? 'MEMBER',
       })
-      .onConflictDoUpdate({
-        target: [projectMembers.projectId, projectMembers.userId],
-        set: { role: input.role ?? 'MEMBER' },
-      });
+      .onConflictDoNothing();
     return { ok: true };
   }
 

@@ -18,7 +18,6 @@ export const updateProjectSchema = z
 
 export const addMemberSchema = z.object({
   userId: z.string().uuid(),
-  role: z.enum(['ADMIN', 'MEMBER']).optional(),
 });
 
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;

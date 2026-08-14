@@ -64,7 +64,7 @@ describe('ProjectsService', () => {
   });
 
   it('listMembers returns members', async () => {
-    const members = [{ userId: 'u2', role: 'MEMBER', name: 'Bruno' }];
+    const members = [{ userId: 'u2', name: 'Bruno' }];
     const result = await service([[project], members]).listMembers(admin, 'p1');
     expect(result).toEqual(members);
   });
@@ -75,16 +75,7 @@ describe('ProjectsService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('addMember with explicit role', async () => {
-    const result = await service([
-      [project],
-      [{ id: 'u2' }],
-      undefined,
-    ]).addMember(admin, 'p1', { userId: 'u2', role: 'ADMIN' });
-    expect(result).toEqual({ ok: true });
-  });
-
-  it('addMember defaults role to MEMBER', async () => {
+  it('addMember inserts membership', async () => {
     const result = await service([
       [project],
       [{ id: 'u2' }],
